@@ -1,1 +1,3 @@
 venv
+database.sqlite3
+.idea
