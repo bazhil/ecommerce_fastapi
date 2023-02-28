@@ -32,6 +32,7 @@ async def create_business(
 
 
 
+
 @app.post('/registration')
 async def user_registration(user: user_pydanticIn):
     user_info = user.dict(exclude_unset=True)
