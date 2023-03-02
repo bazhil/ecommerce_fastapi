@@ -9,7 +9,7 @@ from tortoise.signals import post_save
 from typing import List, Optional, Type
 from tortoise import BaseDBAsyncClient
 
-from email import *
+from emails import *
 
 #response classes
 from fastapi.responses import HTMLResponse
