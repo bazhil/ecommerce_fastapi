@@ -1,8 +1,10 @@
-from fastapi import FastAPI, Request, HTTPException, status
+from fastapi import FastAPI, Request, HTTPException, status, Depends
 from tortoise.contrib.fastapi import register_tortoise
 from models import *
-from authentication import get_hashed_password, verify_token
 
+# Authentication
+from authentication import *
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 # signals
 from tortoise.signals import post_save
@@ -20,6 +22,14 @@ from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
+
+@app.post('/token')
+async def generate_token(request_form: OAuth2PasswordRequestForm = Depends()):
+    token = await token_generator(request_form.username, request_form.password)
+    return {'access_token': token, 'token_type': 'bearer'}
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    return {'token': 'user_token'}
 
 @post_save(User)
 async def create_business(

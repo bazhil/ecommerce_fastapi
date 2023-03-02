@@ -5,3 +5,4 @@ passlib[bcrypt]
 fastapi-mail
 python-dotenv
 pyjwt
+python-multipart

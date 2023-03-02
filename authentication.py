@@ -26,3 +26,7 @@ async def verify_token(token: str):
             headers={'WWW-Authenticate': 'Bearer'})
 
     return user
+
+async def token_generator(username: str, password: str):
+    # user = await authenticate_user(username, password)
+    pass
