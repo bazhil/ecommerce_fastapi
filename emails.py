@@ -36,7 +36,6 @@ async def send_email(email: List, instance: User):
         'id': instance.id,
         'username': instance.username
     }
-
     token = jwt.encode(token_data, config_credentials['SECRET'], algorithm='HS256')
 
     template = f'''
