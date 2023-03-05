@@ -32,7 +32,7 @@ app = FastAPI()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 # static file setup config
-@app.mount('/static', StaticFiles(directore='static'), name='static')
+app.mount('/static', StaticFiles(directory='static'), name='static')
 
 
 @app.post('/token')
