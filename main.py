@@ -215,6 +215,34 @@ async def add_new_product(product: product_pydanticIn, user: user_pydantic = Dep
         return {'status': 'error'}
 
 
+@app.get('/product')
+async def get_product():
+    response = await product_pydantic.from_tortoise_orm(Product.all())
+    return {'status': 'ok', 'data': response}
+
+
+@app.get('/product/{id}')
+async def get_product(id: int):
+    product = await Product.get(id=id)
+    business = await product.business
+    owner = await business.owner
+    response = await product_pydantic.from_queryset_single(product)
+
+    return {'status': 'ok',
+            'data': {
+                'product_details': response,
+                'business_details': {
+                    'name': business.business_name,
+                    'city': business.city,
+                    'region': business.region,
+                    'description': business.business_description,
+                    'logo': business.logo,
+                    'owner_id': owner.id,
+                    'email': owner.email,
+                    'join_date': owner.join_date.strftime('%b %d %Y')
+                }
+            }}
+
 
 register_tortoise(
     app,
