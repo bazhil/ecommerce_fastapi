@@ -244,6 +244,23 @@ async def get_product(id: int):
             }}
 
 
+@app.delete('/products/{id}')
+async def delete_product(id: int, user: user_pydantic = Depends(get_current_user)):
+    product = await Product.get(id=id)
+    business = await product.business
+    owner = await business.owner
+
+    if user == owner:
+        product.delete()
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Not authenticated to perform this action',
+            headers={'WWW-Authenticate': 'Bearer'})
+
+    return {'status': 'ok'}
+
+
 register_tortoise(
     app,
     db_url='sqlite://database.sqlite3',
