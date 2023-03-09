@@ -208,7 +208,7 @@ async def add_new_product(product: product_pydanticIn, user: user_pydantic = Dep
         product['percentage_discount'] = ((product['original_price'] - product['new_price']) /
                                           product['original_price']) * 100
         product_obj = await Product.create(**product, business=user)
-        product_obj = product_pydantic.from_tortoise_orm(product_obj)
+        product_obj = await product_pydantic.from_tortoise_orm(product_obj)
 
         return {'status': 'ok', 'data': product_obj}
     else:
@@ -217,7 +217,8 @@ async def add_new_product(product: product_pydanticIn, user: user_pydantic = Dep
 
 @app.get('/product')
 async def get_product():
-    response = await product_pydantic.from_tortoise_orm(Product.all())
+    response = await product_pydantic.from_queryset(Product.all())
+
     return {'status': 'ok', 'data': response}
 
 
@@ -239,9 +240,9 @@ async def get_product(id: int):
                     'logo': business.logo,
                     'owner_id': owner.id,
                     'email': owner.email,
-                    'join_date': owner.join_date.strftime('%b %d %Y')
+                    'join_date': owner.join_date.strftime('%b %d %Y')}
                 }
-            }}
+            }
 
 
 @app.delete('/products/{id}')
