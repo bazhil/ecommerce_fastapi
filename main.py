@@ -224,15 +224,15 @@ async def get_product():
 
 @app.get('/product/{id}')
 async def get_product(id: int):
-    # TODO: падает - проверь в чем дело!
     product = await Product.get(id=id)
     business = await product.business
     owner = await business.owner
-    response = await product_pydantic.from_queryset_single(product)
+
+    # response = await product_pydantic.from_queryset_single(product)
 
     return {'status': 'ok',
             'data': {
-                'product_details': response,
+                'product_details': product, # response
                 'business_details': {
                     'name': business.business_name,
                     'city': business.city,
@@ -248,13 +248,13 @@ async def get_product(id: int):
 
 @app.delete('/products/{id}')
 async def delete_product(id: int, user: user_pydantic = Depends(get_current_user)):
-    # TODO: не удаляет - исправь!
     product = await Product.get(id=id)
     business = await product.business
     owner = await business.owner
 
     if user == owner:
-        product.delete()
+        await product.delete()
+        await product.save()
     else:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -266,7 +266,6 @@ async def delete_product(id: int, user: user_pydantic = Depends(get_current_user
 
 @app.put('/product/{id}')
 async def update_product(id: int, update_info: product_pydanticIn, user: user_pydantic = Depends(get_current_user)):
-    # TODO: не удаляет - исправь!
     product = await Product.get(id=id)
     business = await product.business
     owner = await business.owner
@@ -278,7 +277,7 @@ async def update_product(id: int, update_info: product_pydanticIn, user: user_py
         update_info['percentage_discount'] = ((update_info['original_price'] - update_info['new_price']) /
                                               update_info['original_price']) * 100
         product = await product.update_from_dict(update_info)
-        product.save()
+        await product.save()
         response = await product_pydantic.from_tortoise_orm(product)
 
         return {'status': 'ok', 'data': response}
