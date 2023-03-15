@@ -6,6 +6,5 @@ fastapi-mail
 python-dotenv
 pyjwt
 python-multipart
-# TODO: проверь, что будет работать!
 Pillow
 aiofiles
